@@ -38,7 +38,7 @@ function scriptRun_(){
   SpreadsheetApp.getUi().showModalDialog(html, "これはただのタイトル？");
 }
 
-function setSubject(weekday, period, subject, url){
+function setData(weekday, period, subject, url){
   const expectedColLength = 4;
   const ss = SpreadsheetApp.getActiveSpreadsheet();
   const sheet = ss.getSheetByName("htmlからデータ追加");

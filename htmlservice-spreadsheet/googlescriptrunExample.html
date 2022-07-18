@@ -4,7 +4,7 @@
     <base target="_top">
   </head>
   <body>
-    <h1>Formの内容をgsで受け取ってなんかする</h1>
+    <h1>Formの内容をgsで受け取ってsheetに反映</h1>
       <form id="form" enctype="multipart/form-data">
 			<ul>
         <li>
@@ -74,14 +74,14 @@
 
         google.script.run.withSuccessHandler(function(){
           google.script.host.close();
-          alert('反映しました！！！😤');
+          alert("反映しました！！！😤");
         }).withFailureHandler(function(){
-          alert('失敗しました...🥺🥺🥺');
-        }).setSubject(weekday, period, subject, url);
+          alert("失敗しました...🥺🥺🥺");
+        }).setData(weekday, period, subject, url);
         event.preventDefault();
       }
-      const form = document.getElementById('form');
-      form.addEventListener('submit', submitFunc);
+      const form = document.getElementById("form");
+      form.addEventListener("submit", submitFunc);
     </script>
   </body>
 </html>
