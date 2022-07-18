@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+  </head>
+  <body>
+    <h1>Formの内容をgsで受け取ってなんかする</h1>
+      <form id="form" enctype="multipart/form-data">
+			<ul>
+        <li>
+          <label for="weekday">曜日 </label>
+          <div>
+            <select id="weekday" name="weekday"> 
+              <option value="Mon" selected="selected">月</option>
+              <option value="Tue">火</option>
+              <option value="Wed">水</option>
+              <option value="Thu">木</option>
+              <option value="Fri">金</option>
+              <option value="Sat">土</option>
+            </select>
+	  	    </div>
+        </li> 
+        <li>
+          <label for="period">時限 </label>
+          <div>
+            <select id="period" name="period"> 
+              <option value="1" selected="selected">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+              <option value="5">5</option>
+              <option value="6">6</option>
+            </select>
+          </div> 
+        </li>
+        <li>
+          <label for="subject">教科 </label>
+          <div>
+            <select id="subject" name="subject"> 
+              <option value="kokugo" selected="selected">国語</option>
+              <option value="sansu">算数</option>
+              <option value="rika">理科</option>
+              <option value="syakai">社会</option>
+              <option value="ongaku">音楽</option>
+              <option value="gakkatsu">学活</option>
+              <option value="sogo">総合</option>
+              <option value="taiiku">体育</option>
+              <option value="zuko">図工</option>
+              <option value="hoken">保健</option>
+              <option value="kateika">家庭科</option>
+              <option value="doutoku">道徳</option>
+              <option value="gig">GIG</option>
+            </select>
+          </div> 
+        </li>
+        <li>
+          <label for="class_URL">URL </label>
+          <div>
+            <input type="text" id="input_URL" name="input_URL" pattern="^(|http(|s)://[0-9a-zA-Z/#&?%\.\-\+_=]+)$" placeholder="not requiredだよ～"> 
+          </div> 
+        </li>
+      </li>	
+      <input id="submitForm" class="button_text" type="submit" name="submit" value="Sheetに反映するよ〜")>
+      </ul>
+	  </form>
+    <script  type="text/javascript">      
+      function submitFunc(event) {
+        const formData = new FormData(form);
+        // なぜかformdataだとSSに送れない？のでせっかくformdataにしたけど手で抽出する
+        const weekday = formData.get("weekday");
+        const period = formData.get("period");
+        const subject = formData.get("subject");
+        const url = formData.get("input_URL");
+
+        google.script.run.withSuccessHandler(function(){
+          google.script.host.close();
+          alert('反映しました！！！😤');
+        }).withFailureHandler(function(){
+          alert('失敗しました...🥺🥺🥺');
+        }).setSubject(weekday, period, subject, url);
+        event.preventDefault();
+      }
+      const form = document.getElementById('form');
+      form.addEventListener('submit', submitFunc);
+    </script>
+  </body>
+</html>

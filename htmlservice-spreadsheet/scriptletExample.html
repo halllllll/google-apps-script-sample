@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <title>scriptletサンプル</title>
+  </head>
+  <body>
+      <!-- これはStandard scriptlet -->
+      <? const nya = "にゃ〜"?>
+      <!-- これはPrinting scriptlet -->
+      <p><?= nya ?></p>
+      <!-- scriptletの中でSpreadSheet APIを使える -->
+      <? const sheet = SpreadsheetApp.getActiveSheet(); ?>
+      <!--  複数行だったらまとめたほうが楽 -->
+      <?
+        const sheets = SpreadsheetApp.getActiveSpreadsheet().getSheets();
+        const val = sheet.getDataRange().getValues();
+      ?>
+      <h2>全シート名とってみた</h2>
+      <ul>
+        <? for(let sheet of sheets){
+          const name = sheet.getName();
+        ?>
+          <li><?= name ?></li>
+        <? } ?>
+      </ul>
+      <h2>テーブルにしてみた</h2>
+      <table>
+      <? for(let row of val){ ?>
+        <tr>
+          <? for(let cell of row ) { ?>
+            <td><?= cell ?></td>
+          <? } ?>
+        </tr>
+      <? } ?>
+    </table>
+    <!-- gs側から代入する（試してないけど配列とかもふつうにいけると思う多分） -->
+    <h2>今いるシート名</h2>
+    <p>今は<span><?= curSheet ?></span>にいるよ</p>
+  </body>
+</html>
