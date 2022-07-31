@@ -52,12 +52,12 @@ function setData(weekday, period, subject, url){
   const sheet = ss.getSheetByName("htmlからデータ追加");
   if(sheet === null){
     console.error("シートが見つからないよ〜");
-    return Error("シートが見つからないよ〜");
+    throw new Error("シートが見つからないよ〜");
   }
   const range = sheet.getDataRange();
   if(range.getWidth() !== expectedColLength){
     console.error(`シートの幅が違うよ〜`);
-    return Error("シートの幅が違うよ〜");
+    throw new Error("シートの幅が違うよ〜");
   }
   const headerRange = sheet.getRange("A1:1");
   const headerValues = headerRange.getValues()[0].filter(e=>e !== "");
@@ -70,7 +70,7 @@ function setData(weekday, period, subject, url){
   for(const headerLabel of [weekdayLabel, periodLabel, subjectLabel, urlLabel]){
     if(headerValues.indexOf(headerLabel) === -1){
       console.error(`ヘッダー ${headerLabel} が見つからないよ〜`);
-      return Error(`ヘッダー ${headerLabel} が見つからないよ〜`);
+      throw new Error(`ヘッダー ${headerLabel} が見つからないよ〜`);
     }
     indexByLabel.set(headerLabel, headerValues.indexOf(headerLabel));
   }
@@ -83,35 +83,39 @@ function setData(weekday, period, subject, url){
 }
 
 function getDataTest(obj){
-  const expectedColLength = 2;
+  console.log(obj);
+  // // objectをjsonオブジェクトとして扱いたいので、フロント側でやったようにStringifyしてからパースする
+  // obj = JSON.parse(JSON.stringify(obj)); // 意味なかった
+  // objectからmapに変換する方法 https://zenn.dev/terrierscript/articles/2021-04-02-java-script-object-entities
+  const mappedObj = new Map(Object.entries(obj));
+  const expectedColLength = 3;
   const ss = SpreadsheetApp.getActiveSpreadsheet();
   const sheet = ss.getSheetByName("htmlからデータ追加2");
   if(sheet === null){
     console.error("シートが見つからないよ〜");
-    return Error("シートが見つからないよ〜");
+    throw new Error("シートが見つからないよ〜");
   }
   const range = sheet.getDataRange();
   if(range.getWidth() !== expectedColLength){
     console.error(`シートの幅が違うよ〜`);
-    return Error("シートの幅が違うよ〜");
+    throw new Error("シートの幅が違うよ〜");
   }
   const headerRange = sheet.getRange("A1:1");
   const headerValues = headerRange.getValues()[0].filter(e=>e !== "");
   // ヘッダー（先頭行）のカラムの存在確認と入れる場所のインデックス確保
   const indexByLabel = new Map();
-  for(const headerLabel of Object.keys(obj)){
+  for(const headerLabel of mappedObj.keys()){
     if(headerValues.indexOf(headerLabel) === -1){
       console.error(`ヘッダー ${headerLabel} が見つからないよ〜`);
-      return Error(`ヘッダー ${headerLabel} が見つからないよ〜`);
+      throw new Error(`ヘッダー ${headerLabel} が見つからないよ〜`);
     }
     indexByLabel.set(headerLabel, headerValues.indexOf(headerLabel));
   }
-
-
-  const data = Object.values(obj).reduce((pre, cur, idx, arr)=>{
-    if(idx===arr.length-1)return pre;
-    arr[indexByLabel.get(cur)] = cur;
-    return arr;
-  }, new Array(expectedColLength));
+  const data = new Array(expectedColLength);
+  mappedObj.forEach((v, k) => {
+    // objectのうち配列だけはいまのところなんとかこうやって操作できる（要素にobjectを含まないものとする）
+    if(Array.isArray(v))v = v.join(",");
+    data[indexByLabel.get(k)] = v;
+  });
   sheet.appendRow(data);
 }
