@@ -35,9 +35,17 @@ function htmlOutput_(){
 function scriptRun_(){
   // 存在するファイルをそのまま使う
   const html = HtmlService.createHtmlOutputFromFile("googlescriptrunExample").setWidth(700).setHeight(600);
-  SpreadsheetApp.getUi().showModalDialog(html, "これはただのタイトル？");
+  SpreadsheetApp.getUi().showModalDialog(html, "これはただのタイトル");
 }
 
+/**
+ * そのまんま受け取る場合
+ * @param {*} weekday 
+ * @param {*} period 
+ * @param {*} subject 
+ * @param {*} url 
+ * @returns 
+ */
 function setData(weekday, period, subject, url){
   const expectedColLength = 4;
   const ss = SpreadsheetApp.getActiveSpreadsheet();
@@ -74,3 +82,36 @@ function setData(weekday, period, subject, url){
   sheet.appendRow(data);
 }
 
+function getDataTest(obj){
+  const expectedColLength = 2;
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const sheet = ss.getSheetByName("htmlからデータ追加2");
+  if(sheet === null){
+    console.error("シートが見つからないよ〜");
+    return Error("シートが見つからないよ〜");
+  }
+  const range = sheet.getDataRange();
+  if(range.getWidth() !== expectedColLength){
+    console.error(`シートの幅が違うよ〜`);
+    return Error("シートの幅が違うよ〜");
+  }
+  const headerRange = sheet.getRange("A1:1");
+  const headerValues = headerRange.getValues()[0].filter(e=>e !== "");
+  // ヘッダー（先頭行）のカラムの存在確認と入れる場所のインデックス確保
+  const indexByLabel = new Map();
+  for(const headerLabel of Object.keys(obj)){
+    if(headerValues.indexOf(headerLabel) === -1){
+      console.error(`ヘッダー ${headerLabel} が見つからないよ〜`);
+      return Error(`ヘッダー ${headerLabel} が見つからないよ〜`);
+    }
+    indexByLabel.set(headerLabel, headerValues.indexOf(headerLabel));
+  }
+
+
+  const data = Object.values(obj).reduce((pre, cur, idx, arr)=>{
+    if(idx===arr.length-1)return pre;
+    arr[indexByLabel.get(cur)] = cur;
+    return arr;
+  }, new Array(expectedColLength));
+  sheet.appendRow(data);
+}

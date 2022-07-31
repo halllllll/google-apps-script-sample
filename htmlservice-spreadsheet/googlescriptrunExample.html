@@ -5,7 +5,8 @@
   </head>
   <body>
     <h1>Formの内容をgsで受け取ってsheetに反映</h1>
-      <form id="form" enctype="multipart/form-data">
+    <h2>(type: multipart/form-data)</h2>
+      <form id="form1" enctype="multipart/form-data" method="post">
 			<ul>
         <li>
           <label for="weekday">曜日 </label>
@@ -63,10 +64,34 @@
       <input id="submitForm" class="button_text" type="submit" name="submit" value="Sheetに反映するよ〜")>
       </ul>
 	  </form>
+    <br>
+    <br>
+    <h2>(type: application/json ... ファイルをアップロードするにはbase64にするなど工夫が必要になる)</h2>
+    <form id="form2" method="post">
+			<ul>
+        <li>
+          <label for="dish">料理 </label>
+          <div>
+            <select id="dish" name="dish"> 
+              <option value="fish" selected="selected">魚</option>
+              <option value="meat">肉</option>
+              <option value="vegitable">野菜</option>
+            </select>
+	  	    </div>
+        </li> 
+        <li>
+          <label for="inputName">Name (4 to 8 characters):</label>
+          <input type="text" id="inputName" name="inputName" minlength="4" maxlength="8" size="10" required>
+        </li>
+      </ul>
+      <input id="submitForm2" class="button_text" type="submit" name="submit" value="GAS側に送るよ")>
+    </form>
     <script  type="text/javascript">      
-      function submitFunc(event) {
-        const formData = new FormData(form);
-        // なぜかformdataだとSSに送れない？のでせっかくformdataにしたけど手で抽出する
+      function submitFunc1(event) {
+        const formData = new FormData(form1);
+        // FormDataをGoogle Apps Script側にそのまま送ったら
+        // The frame attempting navigation of the top-level window is sandboxed, but the flag of 'allow-top-navigation' or 'allow-top-navigation-by-user-activation' is not set.
+        // エラーが発生する。
         const weekday = formData.get("weekday");
         const period = formData.get("period");
         const subject = formData.get("subject");
@@ -75,13 +100,35 @@
         google.script.run.withSuccessHandler(function(){
           google.script.host.close();
           alert("反映しました！！！😤");
-        }).withFailureHandler(function(){
+        }).withFailureHandler( err =>{
           alert("失敗しました...🥺🥺🥺");
-        }).setData(weekday, period, subject, url);
+          console.log(err);
+        }).setData(weekday, period, subject, url/*, formData*/);
         event.preventDefault();
       }
-      const form = document.getElementById("form");
-      form.addEventListener("submit", submitFunc);
+
+      function submitFunc2(e){
+        // FormData -> Object -> JSONにして送る
+        const fd = new FormData(form2);
+        const obj = Object.fromEntries(fd);
+        const json = JSON.stringify(obj);
+
+        google.script.run.withSuccessHandler(function(){
+          google.script.host.close();
+          alert("送信しました！！！😤");
+        }).withFailureHandler( err =>{
+          alert("失敗しました...🥺🥺🥺");
+          console.log(err);
+        }).getDataTest(obj);
+        event.preventDefault();
+
+      }
+
+      const form1 = document.getElementById("form1");
+      form1.addEventListener("submit", submitFunc1);
+
+      const form2 = document.getElementById("form2");
+      form2.addEventListener("submit", submitFunc2);
     </script>
   </body>
 </html>
