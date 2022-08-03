@@ -10,3 +10,4 @@ Google Apps Scriptのうち、主に[HTML Service](https://developers.google.com
 - GUIカスタムメニューから使う。Webアプリは含まれない。
 - `HtmlTemplate`でscriptletを使うサンプル
 - `google.script.run`によるデータ送受信とSheetの更新
+- **Webアプリは含まれない**の制約に関して、Apps Scriptが返すhtmlコンテンツだと内部でscriptletが動作するが、フロントで完結するmenuからだとscriptletが効かない。htmlのscriptタグに含めたスクリプトは有効

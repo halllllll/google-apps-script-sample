@@ -20,9 +20,10 @@
         console.log("scriptタグ内、効かない説ない？？");
     </script>
     <!-- なぜかmenuのhtmlだとscriptletが効かない模様 -->
-    <?!= include('showImgWithVuejsExample_js'); ?>
-    <?!= <script>console.log("どうなってんのこれ"); </script>?>
-    <!-- ただし直接scriptタグに記述したものについては有効？ -->
+    <?!= include('ignoreScriptletOnMenu_js'); ?>
+    <!-- 他のファイルを参照しない場合はうまくいく。つまり上記のincludeはApps Script側になるのでうまくいかない -->
+    <?!= <script>console.log("これはブラウザ側なのでうまくいく?"); </script>?>
+    <!-- 直接scriptタグに記述したものについては、ブラウザ側にあるので有効 -->
     <script>
         const app = Vue.createApp({
           data: ()=>({
@@ -38,6 +39,5 @@
         });
         app.mount("#app");
     </script>
-    
 </body>
 </html>
