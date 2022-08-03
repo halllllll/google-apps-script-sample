@@ -14,6 +14,7 @@ function onOpen(e){
   menu.addItem("ScriptLetの基本(HtmlTemplate)", "scriptLet_");
   menu.addItem("gs側だけでhtmlを生成", "htmlOutput_");
   menu.addItem("html側のアクションを受け取る(google.script.runほか)", "scriptRun_");
+  menu.addItem("Menuだとscriptletが無効になるっぽい", "invokeScriptletOnMenu_");
   menu.addToUi();
 }
 
@@ -119,3 +120,23 @@ function getDataTest(obj){
   });
   sheet.appendRow(data);
 }
+
+
+/**
+ * SpreadSheetの拡張したmenuからだとscriptletが無効になるっぽい？
+ */
+function invokeScriptletOnMenu_(){
+  const html = HtmlService.createHtmlOutputFromFile("ignoreScriptletOnMenu").setWidth(400).setHeight(400);
+  SpreadsheetApp.getUi().showModalDialog(html, "タイトルだよ");
+}
+
+
+function include(filename) {
+  return HtmlService.createHtmlOutputFromFile(filename).getContent();
+}
+
+
+/**
+ * Googleドライブ上の画像のIDを入力し、それをbase64形式で表示する
+ * （ドライブ上の共有用のURLだと、safariなどで読み込めない場合があるので） 
+ */

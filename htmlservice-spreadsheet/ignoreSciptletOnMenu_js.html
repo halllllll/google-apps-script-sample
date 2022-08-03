@@ -1,0 +1,25 @@
+<script>
+    // menuのscriptletから呼び出されるscriptは無視される模様...
+    const app = Vue.createApp({
+      data: ()=>({
+        msgInnerScriptlet: "ここにいるよ〜",
+      }),
+      methods: {
+ 
+      },
+      created: function(){
+        console.log("これはscriptletからの読み込みです");
+        // apps script側でテーブルのやつ叩いとく
+        google.script.run
+            .withSuccessHandler((result) => {
+            })
+            .withFailureHandler((error) => {
+              console.error(error);
+              throw new Error(error);
+            })
+            .TEKITOU();
+      },
+    });
+    app.mount("#app");
+</script>
+  

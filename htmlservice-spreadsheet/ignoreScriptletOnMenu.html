@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+    <div id="app">
+        <h1>menuのhtmlserviceではscriptletが効かないかもしれない例</h1>
+        <h2>これはscriptletから呼び出した場合のmustache文</h2>
+        <p>これ -> {{ msgInnerScriptlet }}</p>
+        <h2>htmlのscriptタグに直接書いた場合だと大丈夫
+        </h2>
+        <p>これ -> {{ msg }} </p>
+        <p>これも -> {{ msg2 }}</p>
+    </div>
+    <script src="https://unpkg.com/vue@3.2.20"></script>
+    <script>
+        console.log("scriptタグ内、効かない説ない？？");
+    </script>
+    <!-- なぜかmenuのhtmlだとscriptletが効かない模様 -->
+    <?!= include('showImgWithVuejsExample_js'); ?>
+    <?!= <script>console.log("どうなってんのこれ"); </script>?>
+    <!-- ただし直接scriptタグに記述したものについては有効？ -->
+    <script>
+        const app = Vue.createApp({
+          data: ()=>({
+            msg: "ほら",
+            msg2: "みえるでしょ",
+          }),
+          methods: {
+     
+          },
+          created: function(){
+            console.log("やあ");
+          },
+        });
+        app.mount("#app");
+    </script>
+    
+</body>
+</html>
