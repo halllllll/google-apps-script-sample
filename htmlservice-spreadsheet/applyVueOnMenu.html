@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>vueを使って、特定のDrive上にある画像ファイルをIDから取得して表示するを試す</h1>
+    <div id="app">
+        <p>{{msg}}</p>
+        <form v-on:submit.stop.prevent="onSubmit" enctype="multipart/form-data" method="post">
+            <input v-model = "fileId" type="text" name="fileID" placeholder="Drive上の画像ファイルのIDをいれてね" required> 
+
+            <input type="submit" name="submit" value="GO">  
+        </form>
+        <p>なんで表示されないの <span>{{fileId}}</span></p>
+        <img v-bind:src="url">
+    </div>
+    <script src="https://unpkg.com/vue@3.2.20"></script>
+    <!-- 直接scriptタグに記述したものについては、ブラウザ側にあるので有効 -->
+    <script>
+        const app = Vue.createApp({
+          data: ()=>({
+            msg: "いえーい",
+            fileId: null,
+            url: "https://1.bp.blogspot.com/-geq-qA5m18Y/X5OcdsQZhSI/AAAAAAABb-8/vA86DIKitZE4_oCpKnFa_sfSXzLU1AfNwCNcBGAsYHQ/s676/pet_robot_dog.png",
+          }),
+          methods: {
+            onSubmit(e){
+                this.msg = this.fileId;
+                return new Promise((resolve, reject) => {
+                    google.script.run.withSuccessHandler(result => {
+                        console.log("success:");
+                        this.url = result;
+                    }).withFailureHandler(err =>{
+                        console.error(err);
+                        alert(`ERROR!!!!\n${err}`);
+                    }).getBase64UrlOnDriveImage(this.fileId);
+                });
+            },                             
+          },
+          created: function(){
+            console.log("やあ");
+          },
+        });
+        app.mount("#app");
+    </script>
+
+</body>
+</html>

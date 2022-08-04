@@ -15,6 +15,7 @@ function onOpen(e){
   menu.addItem("gs側だけでhtmlを生成", "htmlOutput_");
   menu.addItem("html側のアクションを受け取る(google.script.runほか)", "scriptRun_");
   menu.addItem("Menuだとscriptletが無効になるっぽい", "invokeScriptletOnMenu_");
+  menu.addItem("MenuでVueを使ってDrive上の画像をIDからbase64で表示できるのか？", "invokeScriptletOnMenu2_");
   menu.addToUi();
 }
 
@@ -123,7 +124,10 @@ function getDataTest(obj){
 
 
 /**
- * SpreadSheetの拡張したmenuからだとscriptletが無効になるっぽい？
+ * SpreadSheetの拡張したmenuではブラウザ側での動作になるので、
+ * 明示的に呼び出さないとApps Script側のメソッドは呼び出せないよの例
+ * ここではincludeを呼び出そうとして失敗している
+ * （明示的に呼び出す例ではないです）
  */
 function invokeScriptletOnMenu_(){
   const html = HtmlService.createHtmlOutputFromFile("ignoreScriptletOnMenu").setWidth(400).setHeight(400);
@@ -137,6 +141,82 @@ function include(filename) {
 
 
 /**
+ * ブラウザ側のhtml一枚のscriptにvueをcdnでインポートし、かつscriptを記述する、
+ * ことをやり、以下を実現してみる
  * Googleドライブ上の画像のIDを入力し、それをbase64形式で表示する
  * （ドライブ上の共有用のURLだと、safariなどで読み込めない場合があるので） 
  */
+function invokeScriptletOnMenu2_(){
+  const html = HtmlService.createHtmlOutputFromFile("applyVueOnMenu").setWidth(600).setHeight(500);
+  SpreadsheetApp.getUi().showModalDialog(html, "タイトルだよ");
+}
+
+function t(){
+  try{
+    const f = DriveApp.getFileById("diofja;ejfaoidjfoaf");
+    console.log(f.getName());
+  }catch(e){
+    console.log(e);
+  }
+}
+
+/**
+ * Google Drive上の画像IDからその画像のbase64urlを取得
+ * @param {String} fileId 
+ * @returns {String} ret - formatedBase64Url
+ */
+function getBase64UrlOnDriveImage(fileId){  
+  // check
+  // - Drive上にあるか
+  // - アクセスできるか
+  // - 画像ファイルかどうか
+  console.log(`やるよ: ${fileId}`);
+  try{
+    const file = DriveApp.getFileById(fileId);
+    if(file === null){
+      console.error("ドライブ上のファイルじゃないかもよ");
+      throw new Error("is this file on Google Drive?");
+    }
+    if(!accesibleDrive(file)){
+      console.error("アクセスできないよ permission not `ANYONE_WITH_LINK`");
+      throw new Error("permission not `ANYONE_WITH_LINK`");
+    }
+    if(!typeOfImage(file)){
+      console.error("画像ファイルじゃないよ");
+      throw new Error("not image file?");
+    }
+    const ret = createImageBase64(file);
+    return ret;
+  }catch(e){
+    console.error("エラーなんとちがうん？");
+    console.error(e);
+    throw new Error(e);
+  }
+}
+
+/**
+ * Googleドライブに存在かつアクセスできる？
+ */
+function accesibleDrive(file){
+  return file.getSharingAccess().toString() === "ANYONE_WITH_LINK";
+}
+/**
+ * 画像ファイルかどうか MIMEで判断できそうじゃん
+ */
+function typeOfImage(file){
+  // https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types
+  const imageMimeTypes = ["image/jpeg", "image/png", "image/svg+xml"];
+  return imageMimeTypes.includes(file.getMimeType());
+}
+
+/**
+ * Googleドライブ上にある画像ファイルをbase64形式で返す
+ */
+function createImageBase64(file){
+  const fileBlob = file.getBlob();
+  const base64Data = Utilities.base64Encode(fileBlob.getBytes());
+  const contentType = fileBlob.getContentType();
+  const base64Url = "data:" + contentType + ";base64," + base64Data;
+  return base64Url;
+}
+
