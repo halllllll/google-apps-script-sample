@@ -151,14 +151,6 @@ function invokeScriptletOnMenu2_(){
   SpreadsheetApp.getUi().showModalDialog(html, "タイトルだよ");
 }
 
-function t(){
-  try{
-    const f = DriveApp.getFileById("diofja;ejfaoidjfoaf");
-    console.log(f.getName());
-  }catch(e){
-    console.log(e);
-  }
-}
 
 /**
  * Google Drive上の画像IDからその画像のbase64urlを取得

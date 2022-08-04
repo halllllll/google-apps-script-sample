@@ -12,7 +12,6 @@
         <p>{{msg}}</p>
         <form v-on:submit.stop.prevent="onSubmit" enctype="multipart/form-data" method="post">
             <input v-model = "fileId" type="text" name="fileID" placeholder="Drive上の画像ファイルのIDをいれてね" required> 
-
             <input type="submit" name="submit" value="GO">  
         </form>
         <p>なんで表示されないの <span>{{fileId}}</span></p>
