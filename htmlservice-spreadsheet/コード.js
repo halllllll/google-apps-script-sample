@@ -16,6 +16,7 @@ function onOpen(e){
   menu.addItem("html側のアクションを受け取る(google.script.runほか)", "scriptRun_");
   menu.addItem("Menuだとscriptletが無効になるっぽい", "invokeScriptletOnMenu_");
   menu.addItem("MenuでVueを使ってDrive上の画像をIDからbase64で表示できるのか？", "invokeScriptletOnMenu2_");
+  menu.addItem("menuでhtml templateを読む", "invokeScriptletOnMenu3_")
   menu.addToUi();
 }
 
@@ -212,3 +213,14 @@ function createImageBase64(file){
   return base64Url;
 }
 
+
+
+/**
+ * templateを使う
+ */
+ function invokeScriptletOnMenu3_(){
+  const html = HtmlService.createTemplateFromFile("htmltemplateinvokedfrommenu");
+  html.message = "こういう感じ";
+  const evaluatedHtml = html.evaluate();
+  SpreadsheetApp.getUi().showModalDialog(evaluatedHtml, "GO");
+}

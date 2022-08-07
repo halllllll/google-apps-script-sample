@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YEAH</title>
+</head>
+<body>
+    <h1>こんちわ</h1>
+    <p>テンプレートなのでapps script側から文字を埋め込むことができる -> <span><?= message ?> </span></p>
+    <h2>入れ子でも呼び出せる</h2>
+    <?!= include('innerhtmlcomponent'); ?>
+    <h2>テンプレートを使った場合</h2>
+    <p>(evaluateしたあとにgetContent)</p>
+    <?
+        const html = HtmlService.createTemplateFromFile("innerhtmlcomponent");
+        html.innermsg = "入れ子になった場合";
+        html.d = new Date();
+        const evaluatedHtml = html.evaluate();
+    ?>
+    <?!= evaluatedHtml.getContent(); ?>
+</body>
+</html>
