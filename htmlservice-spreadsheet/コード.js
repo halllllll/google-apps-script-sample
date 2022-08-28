@@ -1,4 +1,4 @@
-function myFunction() {
+const myFunction = () => {
   // 最初の行を取得したい
   const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("htmlからデータ追加");
   console.log(sheet.getDataRange().getValues());
@@ -8,7 +8,7 @@ function myFunction() {
 }
 
 
-function onOpen(e){
+const onOpen = (e) => {
   const ui = SpreadsheetApp.getUi();
   const menu = ui.createMenu("htmlserviceいろいろ");
   menu.addItem("ScriptLetの基本(HtmlTemplate)", "scriptLet_");
@@ -20,7 +20,7 @@ function onOpen(e){
   menu.addToUi();
 }
 
-function scriptLet_(){
+const scriptLet_ = () => {
   // テンプレートを使う
   const tmp = HtmlService.createTemplateFromFile("scriptletExample");
   // テンプレート内の変数にアクセスして代入できる
@@ -31,7 +31,7 @@ function scriptLet_(){
 }
 
 
-function scriptRun_(){
+const scriptRun_ = () => {
   // 存在するファイルをそのまま使う
   const html = HtmlService.createHtmlOutputFromFile("googlescriptrunExample").setWidth(700).setHeight(600);
   SpreadsheetApp.getUi().showModalDialog(html, "これはただのタイトル");
@@ -45,7 +45,7 @@ function scriptRun_(){
  * @param {*} url 
  * @returns 
  */
-function setData(weekday, period, subject, url){
+const setData = (weekday, period, subject, url) => {
   const expectedColLength = 4;
   const ss = SpreadsheetApp.getActiveSpreadsheet();
   const sheet = ss.getSheetByName("htmlからデータ追加");
@@ -81,7 +81,7 @@ function setData(weekday, period, subject, url){
   sheet.appendRow(data);
 }
 
-function getDataTest(obj){
+const getDataTest = (obj) => {
   console.log(obj);
   // // objectをjsonオブジェクトとして扱いたいので、フロント側でやったようにStringifyしてからパースする
   // obj = JSON.parse(JSON.stringify(obj)); // 意味なかった
@@ -126,13 +126,13 @@ function getDataTest(obj){
  * ここではincludeを呼び出そうとして失敗している
  * （明示的に呼び出す例ではないです）
  */
-function invokeScriptletOnMenu_(){
+const invokeScriptletOnMenu_ = () => {
   const html = HtmlService.createHtmlOutputFromFile("ignoreScriptletOnMenu").setWidth(400).setHeight(400);
   SpreadsheetApp.getUi().showModalDialog(html, "タイトルだよ");
 }
 
 
-function include(filename) {
+const include = (filename) => {
   return HtmlService.createHtmlOutputFromFile(filename).getContent();
 }
 
@@ -143,7 +143,7 @@ function include(filename) {
  * Googleドライブ上の画像のIDを入力し、それをbase64形式で表示する
  * （ドライブ上の共有用のURLだと、safariなどで読み込めない場合があるので） 
  */
-function invokeScriptletOnMenu2_(){
+const invokeScriptletOnMenu2_ = () => {
   const html = HtmlService.createHtmlOutputFromFile("applyVueOnMenu").setWidth(600).setHeight(500);
   SpreadsheetApp.getUi().showModalDialog(html, "タイトルだよ");
 }
@@ -154,7 +154,7 @@ function invokeScriptletOnMenu2_(){
  * @param {String} fileId 
  * @returns {String} ret - formatedBase64Url
  */
-function getBase64UrlOnDriveImage(fileId){  
+const getBase64UrlOnDriveImage = (fileId) => {
   // check
   // - Drive上にあるか
   // - アクセスできるか
@@ -186,13 +186,13 @@ function getBase64UrlOnDriveImage(fileId){
 /**
  * Googleドライブに存在かつアクセスできる？
  */
-function accesibleDrive(file){
+const accesibleDrive = (file) => {
   return file.getSharingAccess().toString() === "ANYONE_WITH_LINK";
 }
 /**
  * 画像ファイルかどうか MIMEで判断できそうじゃん
  */
-function typeOfImage(file){
+const typeOfImage = (file) => {
   // https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types
   const imageMimeTypes = ["image/jpeg", "image/png", "image/svg+xml"];
   return imageMimeTypes.includes(file.getMimeType());
@@ -201,7 +201,7 @@ function typeOfImage(file){
 /**
  * Googleドライブ上にある画像ファイルをbase64形式で返す
  */
-function createImageBase64(file){
+const createImageBase64 = (file) => {
   const fileBlob = file.getBlob();
   const base64Data = Utilities.base64Encode(fileBlob.getBytes());
   const contentType = fileBlob.getContentType();
@@ -214,7 +214,7 @@ function createImageBase64(file){
 /**
  * templateを使う
  */
-function invokeScriptletOnMenu3_(){
+const invokeScriptletOnMenu3_ = () => {
   const html = HtmlService.createTemplateFromFile("htmltemplateinvokedfrommenu");
   html.message = "こういう感じ";
   const evaluatedHtml = html.evaluate();
