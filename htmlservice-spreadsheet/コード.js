@@ -12,11 +12,11 @@ function onOpen(e){
   const ui = SpreadsheetApp.getUi();
   const menu = ui.createMenu("htmlserviceいろいろ");
   menu.addItem("ScriptLetの基本(HtmlTemplate)", "scriptLet_");
-  menu.addItem("gs側だけでhtmlを生成", "htmlOutput_");
   menu.addItem("html側のアクションを受け取る(google.script.runほか)", "scriptRun_");
   menu.addItem("Menuだとscriptletが無効になるっぽい", "invokeScriptletOnMenu_");
   menu.addItem("MenuでVueを使ってDrive上の画像をIDからbase64で表示できるのか？", "invokeScriptletOnMenu2_");
-  menu.addItem("menuでhtml templateを読む", "invokeScriptletOnMenu3_")
+  menu.addItem("menuでhtml templateを読む", "invokeScriptletOnMenu3_");
+  menu.addItem("GAS側でhtmlを生成してカスタムメニューのモーダルにする\n(no scriptlet)", "genHtmlOnAppsScript_");
   menu.addToUi();
 }
 
@@ -28,10 +28,6 @@ function scriptLet_(){
   tmp.curSheet = sheet;
   const htmlOutputObj = tmp.evaluate().setWidth(800).setHeight(600);
   SpreadsheetApp.getUi().showModalDialog(htmlOutputObj, "script letとtemplateのサンプルだよ");
-}
-
-function htmlOutput_(){
-  
 }
 
 
@@ -218,9 +214,34 @@ function createImageBase64(file){
 /**
  * templateを使う
  */
- function invokeScriptletOnMenu3_(){
+function invokeScriptletOnMenu3_(){
   const html = HtmlService.createTemplateFromFile("htmltemplateinvokedfrommenu");
   html.message = "こういう感じ";
   const evaluatedHtml = html.evaluate();
   SpreadsheetApp.getUi().showModalDialog(evaluatedHtml, "GO");
+}
+
+/**
+ * GAS側でhtmlを作成する(no scriptlet)
+ * 作成するhtmlは<html>からやる必要はなく、個別のタグが解釈できればいい
+ */
+const genHtmlOnAppsScript_ = () =>{
+  let htmlContent1 = `<h2>HELLOO</h2>`;
+  htmlContent1+=`<div>`;
+  htmlContent1+=`<p>this is html output</p>`;
+  htmlContent1+=`<p>今:<span>${new Date()}</span></p>`;
+  htmlContent1+=`<ul>`;
+  for(let i=0; i<3; i++){
+    if(Math.random()<.5){
+      htmlContent1+=`<li>羊が ${i} 匹</li>`;
+    }else{
+      htmlContent1+=`<li>皿が <strong>${i} 枚</strong></li>`;
+    }
+  }
+  htmlContent1+=`</ul>`;
+  htmlContent1+=`</div>`;
+  const html = `<div><h1>ようこそ</h1>${htmlContent1}</div>`;
+  const htmlOutput = HtmlService.createHtmlOutput(html);
+  SpreadsheetApp.getUi().showModalDialog(htmlOutput, "こうやってモーダルにhtmlを投げる")
+
 }
