@@ -4,7 +4,9 @@
 
 Triggerには自身の固有のIDを取得できるメソッドがある（[Class Trigger#getUniqueId()](https://developers.google.com/apps-script/reference/script/trigger?hl=en#getUniqueId())）。そして、Triggerのイベントが発火したときには、その関数に固有のイベントオブジェクトが第一引数に渡される。ちょうど`doGet(e)`のように。Triggerのイベントオブジェクトについてはこちらを参照 [Event Objects](https://developers.google.com/apps-script/guides/triggers/events?hl=en)
 
-Apps Script内からTriggerを作成するには`ScriptApp.newTrigger("TriggerName").timeBased().at(t).create();`みたいな感じで`newTrigger`を使って作成する。（参考: [Class T riggerBuilder](https://developers.google.com/apps-script/reference/script/trigger-builder?hl=en)）このとき、指定した時間に指定した関数の名前でTriggerが予約される。指定できるのは関数名だけなので、一見して変数を渡すことができないように思える。これに悩んでいたが、`Trigger ID`と`Property Service`を使って、いい感じにTriggerに変数を渡しているような雰囲気になれた。
+Apps Script内からTriggerを作成するには`ScriptApp.newTrigger("TriggerName").timeBased().at(t).create();`みたいな感じで`newTrigger`を使って作成する。（参考: [Class T riggerBuilder](https://developers.google.com/apps-script/reference/script/trigger-builder?hl=en)）このとき、指定した時間に指定した関数の名前でTriggerが予約される。指定できるのは関数名だけなので、一見して変数を渡すことができないように思える。これに悩んでいたが、`Trigger ID`と`Property Service`を使って、いい感じにTriggerに変数を渡しているような雰囲気になれた。実際には引数として変数を渡しているわけではなく、`Property Service`を経由しているので、タイトルは合ってない。
+
+決め打ちでの並列処理や、何度も叩かれた定期・予約実行なんかにうまい具合に使えそうだ。
 
 ## ポイント
 - Trigger ID
