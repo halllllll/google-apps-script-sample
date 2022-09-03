@@ -31,6 +31,7 @@ Google Apps Scriptから`Youtube Data API v3`を使えるので使ってみる�
   - `<input type="datetime-local">`初めて知った
 - `Trigger`に変数を渡すような感じで使う
   - `Trigger ID`ってのがあり、それをキーにして`PropertyService`で変数を扱う
+  - [trigger-passed-variables](https://github.com/halllllll/google-apps-script-sample/tree/master/trigger-passed-variables)のデモで使ったものと同じ仕組み
 - `FormData`は`JSON.stringify`で固めていい
 - 予約した変更予定のキャンセル処理は未実装
 - もっと軽めのごく簡単なWebアプリでもいいかもしれない。動画IDを入力して公開設定を変えるだけのもの。
