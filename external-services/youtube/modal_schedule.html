@@ -1,0 +1,79 @@
+<!--
+  ここに含まれているもののメモ
+  - HtmlService
+  - GUI,カスタムメニュー
+  - カスタムメニューで独自htmlを作成
+  - template
+  - templateにGoogle Apps Script側から変数を渡す
+  - プロパティの値であろうがsclitpletは機能すること
+  - カスタムメニューでのform
+  - google.script.run
+  - html, formの`type="datetime-local"`(知らんかった)
+  - html, selectのoptionの値を配列で取得（知らんかった)
+-->
+<div>
+    <form id="videoScheduling" enctype="multipart/form-data" method="post">
+      <div>
+        <label for="videoSelection">      
+          <select name="videoNames" id="videoSelection" form="videoScheduling" reqiuired>
+          <option value="" style="width: 200px;">--Please choose an option--</option>
+          <?!= selection ?>
+          </select>
+        </label>
+      </div>
+      <div>
+        <label for="videoID">動画ID: <input type="text" name="videoIdInput" id="videoID" placeholder="put video id here, or choice above select box" required><label>
+      </div>
+      <div style="margin-top: 10px;">
+      <?!= radiobuttons ?>
+      </div>
+      <label for="scheduledTime">変更予約時間:　</label>
+      <input type="datetime-local" id="scheduledTime"
+          name="scheduledTime" value="<?!= curTime ?>"
+          min="<?!= curTime ?>" required>
+      <div>
+        <button type="submit" id="submitBtn">この内容で予約する</button>
+      </div>
+    </form>
+  </div>
+  <script>
+    const videoSelection = document.getElementById("videoSelection");
+    const videoIdInput = document.getElementById("videoID");
+    const scheduledTime = document.getElementById("scheduledTime");
+    videoSelection.addEventListener("change", e => {
+      videoIdInput.value = e.target.value;
+    });
+    const form = document.getElementById("videoScheduling");
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      // IDが選択肢に存在するかチェック
+      const options = [];
+      Array.from(videoSelection.options, (opt) => {
+        options.push(opt.value);
+      });
+      if(options.indexOf(videoIdInput.value) === -1){
+        alert(`動画ID:[${videoIdInput.value}]がSheet上に存在しないです。確認してください\nだめな場合はSheetを更新してから再チャレンジしてみてください`);
+        return;
+      }
+      // 今の時間チェック
+      const t = new Date(Date.now());
+      const intervalMillsec = 30 * 60 * 1000;
+      if(intervalMillsec < t-new Date(scheduledTime.value)){
+        alert(`現在時刻より${intervalMillsec/(60*1000)}分以上の間隔を空けてください`);
+        return;
+      }
+  
+      const now = Date.now(scheduledTime.value);
+      const fd = new FormData(form);
+      const obj = Object.fromEntries(fd);
+      this.disabled = true;
+      google.script.run.withSuccessHandler( result => {
+        google.script.host.close();
+      }).withFailureHandler( err =>{
+        alert("失敗しました...🥺🥺🥺");
+        console.log(err);
+      }).scheduleUpdate(obj);
+    });
+  </script>
+  
