@@ -178,7 +178,7 @@ const updateList_ = () => {
         const img = builder.setSourceUrl(thumbnailUrl).setAltTextTitle(title).toBuilder().build();
         row[thumbnailIdx] = img;
         result[idx] = row;
-      } 
+      }
       fieldRange.setValues(result);
       ui.alert("処理が完了しました");
     }catch(e){
@@ -269,8 +269,8 @@ const scheduleUpdate = (formDataObj) =>{
   const targetRowNum = getRowNumByVideoId_(videoId);
   const properties = PropertiesService.getScriptProperties();
   const trig = ScriptApp.newTrigger("setStatusTrigger_").timeBased().at(new Date(schedule)).create();
-  const trigUUID = trig.getUniqueId();
-  properties.setProperty(`args_${trigUUID}`, JSON.stringify(formDataObj));
+  const trigUID = trig.getUniqueId();
+  properties.setProperty(`args_${trigUID}`, JSON.stringify(formDataObj));
   // 予約後処理
   const scheduleCol = colNumToA1_(EXPECTED_HEADER.indexOf(`schedule`)+1);
   const targetCell = ss.getRange(`${scheduleCol}${targetRowNum+1}`);
