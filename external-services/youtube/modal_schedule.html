@@ -44,6 +44,7 @@
       videoIdInput.value = e.target.value;
     });
     const form = document.getElementById("videoScheduling");
+    const submitBtn = document.getElementById("submitBtn");
     form.addEventListener("submit", (e) => {
       e.preventDefault();
       e.stopPropagation();
@@ -67,7 +68,7 @@
       const now = Date.now(scheduledTime.value);
       const fd = new FormData(form);
       const obj = Object.fromEntries(fd);
-      this.disabled = true;
+      submitBtn.disabled = true;
       google.script.run.withSuccessHandler( result => {
         google.script.host.close();
       }).withFailureHandler( err =>{
