@@ -59,13 +59,13 @@ const myTrigger = (triggerObj) => { // トリガー関数の第一引数には�
   deleteTriggerById(triggerId);
   deletePropertyByKey(`prop_${triggerId}`);
   // デモだし70分くらい経ったら終わらせることにする
-  const ThirtyMinitueMillisec = 70 * 60 * 1000;
+  const limitTime = 70 * 60 * 1000;
   const dif = new Date(obj.ended).getTime() - new Date(obj.created).getTime();
   const M = Math.floor(dif / (60*1000));
   const s = Math.floor(M%60);
   console.log(`開始から${M}分${s}秒経過`);
-  if(ThirtyMinitueMillisec < dif){
-    console.log(`開始から${ThirtyMinitueMillisec}ミリ秒経ったのでおわり`);
+  if(limitTime < dif){
+    console.log(`開始から${limitTime}ミリ秒経ったのでおわり`);
     return;
   }
   genTrigger(obj);
