@@ -17,6 +17,7 @@ const onOpen = (e) => {
   menu.addItem("MenuでVueを使ってDrive上の画像をIDからbase64で表示できるのか？", "invokeScriptletOnMenu2_");
   menu.addItem("menuでhtml templateを読む", "invokeScriptletOnMenu3_");
   menu.addItem("GAS側でhtmlを生成してカスタムメニューのモーダルにする\n(no scriptlet)", "genHtmlOnAppsScript_");
+  menu.addItem("GAS側で生成したhtmlだけでイベントの授受", "communicateModal_");
   menu.addToUi();
 }
 
@@ -243,5 +244,76 @@ const genHtmlOnAppsScript_ = () =>{
   const html = `<div><h1>ようこそ</h1>${htmlContent1}</div>`;
   const htmlOutput = HtmlService.createHtmlOutput(html);
   SpreadsheetApp.getUi().showModalDialog(htmlOutput, "こうやってモーダルにhtmlを投げる")
+}
 
+/**
+ * ファイルを分けたくない場合にイベント発火しても、
+ * モーダル内で受け取って更新もする
+ */
+
+const communicateModal_ = () => {
+  const base = `
+  <div>
+    <h2>AppsScriptで直書きしたHTMLでJSイベントのやりとり</h2>
+    <div><button id="updateBtn">更新</button><span id="timeMsg">初回起動: ${Utilities.formatDate(new Date(), "Asia/Tokyo", "yyyy-MM-dd HH:mm:ss")}</span></div>
+    <div id="content">まだなにもない</div>
+  </div>
+  <script>
+    <?!= js ?>
+  </script>
+  `;
+  const js = `
+  const btn = document.getElementById("updateBtn");
+  const msg = document.getElementById("timeMsg");
+  const content = document.getElementById("content");
+
+  btn.addEventListener("click", e=>{
+    e.stopPropagation();
+    e.preventDefault();
+    console.log("click!");
+    msg.innerHTML = "connecting...";
+    
+    google.script.run.
+      withSuccessHandler(result=>{
+        content.innerHTML = result;
+        const now = new Date();
+        msg.innerHTML = " Last update: " + (now.getMonth()+1) + "/" +now.getDate() + " " + now.getHours() + ":" + now.getMinutes() + ":" + now.getSeconds();
+      }).withFailureHandler(err=>{
+        console.log(err);
+      }).invokeAppsScriptFunc();
+  });
+
+  `;
+  const htmlOutput = HtmlService.createTemplate(base);
+  htmlOutput.js = js;
+  const html = htmlOutput.evaluate().setHeight(500).setWidth(800);
+  SpreadsheetApp.getUi().showModalDialog(html, "htmlファイルを分けず、Apps Scriptだけでイベント授受・画面再描画");
+}
+
+const invokeAppsScriptFunc = () => {
+  const sheet = SpreadsheetApp.getActiveSheet();
+  const values = sheet.getDataRange().getValues();
+  console.log(values);
+  let ret = "<table>";
+  for(let [idx, row] of values.entries()){
+    console.log(`row: ${row}`);
+    if(idx === 0){
+      ret += "<thead><tr>";
+      for(let cell of row){
+        ret += `<th>${cell}</th>`;
+      }
+      ret += "</tr></thead>";
+      ret += "<tbody>";
+      continue;
+    }
+    ret += "<tr>"
+    for(let cell of row){
+      ret += `<td>${cell}</td>`
+    }
+    ret += "</tr>";
+    // ret += `<tr>${row.map(e=>"<td>"+e+"</td>").join()}</tr>`;
+  }
+  ret += "</tbody>";
+  ret += "</table>";
+  return ret;
 }
