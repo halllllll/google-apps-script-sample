@@ -287,7 +287,7 @@ const communicateModal_ = () => {
   const htmlOutput = HtmlService.createTemplate(base);
   htmlOutput.js = js;
   const html = htmlOutput.evaluate().setHeight(500).setWidth(800);
-  SpreadsheetApp.getUi().showModalDialog(html, "htmlファイルを分けず、Apps Scriptだけでイベント授受・画面再描画");
+  SpreadsheetApp.getUi().showModelessDialog(html, "htmlファイルを分けず、Apps Scriptだけでイベント授受・画面再描画");
 }
 
 const invokeAppsScriptFunc = () => {
@@ -296,22 +296,12 @@ const invokeAppsScriptFunc = () => {
   console.log(values);
   let ret = "<table>";
   for(let [idx, row] of values.entries()){
-    console.log(`row: ${row}`);
-    if(idx === 0){
-      ret += "<thead><tr>";
-      for(let cell of row){
-        ret += `<th>${cell}</th>`;
-      }
-      ret += "</tr></thead>";
+    if(idx===0){
+      ret += `<thead><tr>${row.map(cell => "<th>"+cell+"</th>").join("")}</tr></thead>`;
       ret += "<tbody>";
       continue;
     }
-    ret += "<tr>"
-    for(let cell of row){
-      ret += `<td>${cell}</td>`
-    }
-    ret += "</tr>";
-    // ret += `<tr>${row.map(e=>"<td>"+e+"</td>").join()}</tr>`;
+    ret += `<tr>${row.map(e=>"<td>"+e+"</td>").join("")}</tr>`;
   }
   ret += "</tbody>";
   ret += "</table>";
