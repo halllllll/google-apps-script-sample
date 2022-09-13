@@ -301,7 +301,7 @@ const invokeAppsScriptFunc = () => {
       ret += "<tbody>";
       continue;
     }
-    ret += `<tr>${row.map(e=>"<td>"+e+"</td>").join("")}</tr>`;
+    ret += `<tr>${row.map(cell=>"<td>"+cell+"</td>").join("")}</tr>`;
   }
   ret += "</tbody>";
   ret += "</table>";
